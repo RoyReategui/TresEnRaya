@@ -1,15 +1,38 @@
-import { useState } from 'react'
-import { TURNS, checkDraw, checkWinner } from '../helpers'
+import { useEffect, useState } from 'react'
+import { TURNS, checkDraw, checkWinner, randomInterval, subLista } from '../helpers'
+import { IndexWinnerPlayer } from '../helpers/logicMichi'
 
-export const useTikTack = () => {
+export const useTikTack = ({ typeState }) => {
   const [board, setBoard] = useState(() => {
     return JSON.parse(window.localStorage.getItem('tictac')) || Array(9).fill(null)
   })
   const [currentTurn, setcurrentTurn] = useState(() => {
-    return JSON.parse(window.localStorage.getItem('turn')) || TURNS.O
+    return JSON.parse(window.localStorage.getItem('turn')) || TURNS.X
   })
   const [isWinneer, setIsWinner] = useState(false)
   const [isdraw, setdraw] = useState(false)
+
+  useEffect(() => {
+    if (typeState === 'onetoone' || currentTurn === TURNS.X) return undefined
+    const listIndexEmpty = subLista(board, null)
+    const listPc = subLista(board, TURNS.O)
+    const listPlayer = subLista(board, TURNS.X)
+
+    const indexWinnerPC = IndexWinnerPlayer(listIndexEmpty, listPc)
+    const indexWinnerPlayer = IndexWinnerPlayer(listIndexEmpty, listPlayer)
+
+    if (indexWinnerPC >= 0) {
+      updateBoard(indexWinnerPC)
+    } else if (indexWinnerPlayer >= 0) {
+      updateBoard(indexWinnerPlayer)
+    } else if (listIndexEmpty.length === 8) {
+      const indexCorners = [0, 2, 6, 8]
+      const indexEmpty = indexCorners.findIndex(ele => !board[ele])
+      updateBoard(indexCorners[indexEmpty])
+    } else if (listIndexEmpty.length >= 0) {
+      updateBoard(listIndexEmpty[randomInterval(0, listIndexEmpty.length - 1)])
+    }
+  }, [currentTurn])
 
   const updateBoard = (index) => {
     if (board[index]) return

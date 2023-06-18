@@ -15,3 +15,15 @@ export const checkWinner = (newBoard = [], currentTurn) => {
 export const checkDraw = (newBoard = []) => {
   return newBoard.every(ele => ele !== null)
 }
+
+export const randomInterval = (min, max) => {
+  min = Math.max(min)
+  max = Math.floor(max)
+
+  return Math.floor((Math.random() * (max - min + 1)) + min)
+}
+
+export const subLista = (board, itemSelectList) => {
+  return board.map((_, index) => ({ value: _, index }))
+    .filter((ele) => ele.value === itemSelectList).map(ele => ele.index)
+}
