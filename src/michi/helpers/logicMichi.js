@@ -40,3 +40,33 @@ export function IndexWinnerPlayer (boardEmpty, gameIndexPlayer) {
   const paresPlayer = extractPairs(gameIndexPlayer)
   return SearchIndexWinnerPlayer(boardEmpty, paresPlayer)
 }
+
+export function anticiplePay (gameIndexPC, gameIndexPlayer) {
+  let indexPreviu = -1
+  const unionIndexPlay = gameIndexPC.concat(gameIndexPlayer).join('')
+  console.log(unionIndexPlay)
+  const patrones = {
+    '048': 6,
+    405: 8,
+    407: 5,
+    408: 3,
+    413: 6,
+    415: 0,
+    416: 0,
+    418: 3,
+    423: 7,
+    426: 1,
+    427: 3,
+    431: 2,
+    432: 7,
+    437: 0,
+    438: 6,
+    450: 2,
+    451: 8,
+    456: 1,
+    457: 6
+
+  }
+  indexPreviu = patrones[unionIndexPlay] ?? -1
+  return indexPreviu
+}
