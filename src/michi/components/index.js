@@ -1,2 +1,6 @@
+export * from './Board'
 export * from './Box'
+export * from './Button'
+export * from './Options'
+export * from './Tiltle'
 export * from './Turn'

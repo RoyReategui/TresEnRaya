@@ -9,7 +9,8 @@ export const useTikTack = ({ typeState }) => {
   const [currentTurn, setcurrentTurn] = useState(() => {
     return JSON.parse(window.localStorage.getItem('turn')) || TURNS.X
   })
-  const [isWinneer, setIsWinner] = useState(false)
+  const [processingPlay, setProcessingPlay] = useState(false)
+  const [isWinneer, setIsWinner] = useState(null)
   const [isdraw, setdraw] = useState(false)
 
   useEffect(() => {
@@ -22,36 +23,45 @@ export const useTikTack = ({ typeState }) => {
     const indexWinnerPC = IndexWinnerPlayer(listIndexEmpty, listPc)
     const indexWinnerPlayer = IndexWinnerPlayer(listIndexEmpty, listPlayer)
 
+    // Ver si la pc tiene una casilla ganadara
     if (indexWinnerPC >= 0) {
-      updateBoard(indexWinnerPC)
-    } else if (indexWinnerPlayer >= 0) {
-      updateBoard(indexWinnerPlayer)
+      updateBoardDelay(indexWinnerPC)
+    } else if (indexWinnerPlayer >= 0) { // Ver si el jugador "persona" tiene una casilla ganadora
+      updateBoardDelay(indexWinnerPlayer)
     } else if (listPlayer.length === 1) {
       if (!board[4]) {
-        updateBoard(4)
+        updateBoardDelay(4)
         return
       }
       const indexCorners = [0, 2, 6, 8]
       const indexEmpty = indexCorners.findIndex(ele => !board[ele])
-      updateBoard(indexCorners[indexEmpty])
+      updateBoardDelay(indexCorners[indexEmpty])
     } else if (listPc.length === 1 && anticiplePay(listPc, listPlayer) !== -1) {
-      updateBoard(anticiplePay(listPc, listPlayer))
+      updateBoardDelay(anticiplePay(listPc, listPlayer))
     } else if (listIndexEmpty.length >= 0) {
-      updateBoard(listIndexEmpty[randomInterval(0, listIndexEmpty.length - 1)])
+      updateBoardDelay(listIndexEmpty[randomInterval(0, listIndexEmpty.length - 1)])
     }
   }, [currentTurn])
 
+  const updateBoardDelay = (index) => {
+    setProcessingPlay(true)
+    setTimeout(() => {
+      updateBoard(index)
+      setProcessingPlay(false)
+    }, 500)
+  }
+
   const updateBoard = (index) => {
-    if (board[index]) return
+    if (processingPlay || board[index]) return
 
     const newBoard = [...board]
     newBoard[index] = currentTurn
 
     setBoard(newBoard)
     window.localStorage.setItem('tictac', JSON.stringify(newBoard))
-
-    if (checkWinner(newBoard, currentTurn)) {
-      setIsWinner(true)
+    const arrWinner = checkWinner(newBoard, currentTurn)
+    if (arrWinner) {
+      setIsWinner(arrWinner)
       return
     } else if (checkDraw(newBoard)) {
       setdraw(true)

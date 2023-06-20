@@ -44,7 +44,6 @@ export function IndexWinnerPlayer (boardEmpty, gameIndexPlayer) {
 export function anticiplePay (gameIndexPC, gameIndexPlayer) {
   let indexPreviu = -1
   const unionIndexPlay = gameIndexPC.concat(gameIndexPlayer).join('')
-  console.log(unionIndexPlay)
   const patrones = {
     '048': 6,
     405: 8,

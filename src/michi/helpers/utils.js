@@ -5,11 +5,15 @@ export const checkWinner = (newBoard = [], currentTurn) => {
   newBoard.forEach((ele, index) => {
     if (ele === currentTurn) { arrIndex.push(index) }
   })
-
   if (arrIndex.length < 3) return false
-  return OPTION_WINNER.some(arr => {
+
+  return OPTION_WINNER.find(arr => {
     return arr.every(pos => arrIndex.includes(pos))
   })
+
+  // return OPTION_WINNER.some(arr => {
+  //   return arr.every(pos => arrIndex.includes(pos))
+  // })
 }
 
 export const checkDraw = (newBoard = []) => {
