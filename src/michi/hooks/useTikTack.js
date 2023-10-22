@@ -6,14 +6,27 @@ export const useTikTack = ({ typeState }) => {
   const [board, setBoard] = useState(() => {
     return JSON.parse(window.localStorage.getItem('tictac')) || Array(9).fill(null)
   })
+
   const [currentTurn, setcurrentTurn] = useState(() => {
     return JSON.parse(window.localStorage.getItem('turn')) || TURNS.X
   })
+
   const [processingPlay, setProcessingPlay] = useState(false)
   const [isWinneer, setIsWinner] = useState(null)
-  const [isdraw, setdraw] = useState(false)
+  const [isdraw, setDraw] = useState(false)
+
+  // Verifica si existe ganador en base al turno actual o empate
+  useEffect(() => {
+    const arrWinner = checkWinner(board, currentTurn)
+    if (checkWinner(board, currentTurn)) return setIsWinner(arrWinner)
+    if (checkDraw(board)) setDraw(true)
+  }, [])
 
   useEffect(() => {
+    checkBoard()
+  }, [currentTurn])
+
+  const checkBoard = () => {
     if (typeState === 'onetoone' || currentTurn === TURNS.X) return undefined
 
     const listIndexEmpty = subLista(board, null)
@@ -41,7 +54,7 @@ export const useTikTack = ({ typeState }) => {
     } else if (listIndexEmpty.length >= 0) {
       updateBoardDelay(listIndexEmpty[randomInterval(0, listIndexEmpty.length - 1)])
     }
-  }, [currentTurn])
+  }
 
   const updateBoardDelay = (index) => {
     setProcessingPlay(true)
@@ -64,7 +77,7 @@ export const useTikTack = ({ typeState }) => {
       setIsWinner(arrWinner)
       return
     } else if (checkDraw(newBoard)) {
-      setdraw(true)
+      setDraw(true)
       return
     }
     const newTurns = currentTurn === TURNS.X ? TURNS.O : TURNS.X
@@ -78,7 +91,7 @@ export const useTikTack = ({ typeState }) => {
     setBoard(Array(9).fill(null))
     setcurrentTurn('😍')
     setIsWinner(false)
-    setdraw(false)
+    setDraw(false)
   }
 
   return { board, updateBoard, currentTurn, isWinneer, isdraw, resetState }
